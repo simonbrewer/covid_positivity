@@ -54,6 +54,13 @@ prior_rw1 <- list(theta = list(prior="pc.prec", param=c(rw1_u, rw1_alpha)))
 #   filter(date1 < 150) %>%
 #   # select(struct, date1, PERCENTPOS7_CDC) %>%
 #   mutate(lppos7 = log(PERCENTPOS7_CDC+1e-1))
+dat.sub <- dat2 %>%
+  filter(date1 < 200)
+dat.sub <- dat2 %>%
+  filter(date1 > 100 & date1 < 250) %>%
+  select(TESTSNEW7POS_CDC, Pop_m, gini, Uninsured, Production,
+         RUCC, PCP, nursing, universities, RPL_THEMES, struct, date1)
+
 prior.prec <- list(prec = list(prior = "pc.prec",
                                param = c(1, 0.01)))
 # prior.prec <- list(prec = list(initial = log(0.000001),
@@ -107,17 +114,30 @@ f2 <- TESTSNEW7POS_CDC ~
   f(date1, model = "rw1", hyper = prior_rw1, 
     scale.model = TRUE, diagonal = 1e-2)
 
-system.time(
-  res2 <- inla(f2, data = dat2,
+library(profmem)
+p <- profmem(
+  res2 <- inla(f2, data = dat.sub,
                control.predictor = list(compute = TRUE),
                control.compute = list(dic = TRUE, waic = TRUE),
                # control.fixed = list(prec.intercept = 0.1),
                control.inla = list(diagonal = 0,
                                    strategy = "simplified.laplace", 
                                    int.strategy="eb"), 
-               verbose = TRUE, num.threads = 4
+               verbose = TRUE, num.threads = 1
   )
 )
+
+# system.time(
+#   res2 <- inla(f2, data = dat.sub,
+#                control.predictor = list(compute = TRUE),
+#                control.compute = list(dic = TRUE, waic = TRUE),
+#                # control.fixed = list(prec.intercept = 0.1),
+#                control.inla = list(diagonal = 0,
+#                                    strategy = "simplified.laplace", 
+#                                    int.strategy="eb"), 
+#                verbose = TRUE, num.threads = 1
+#   )
+# )
 
 summary(res2)
 # plot_fixed_marginals(res1)

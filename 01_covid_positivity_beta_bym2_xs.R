@@ -17,7 +17,10 @@ library(INLAutils)
 load("dat2.RData")
 dim(dat2)
 
-
+dat2$TESTSNEW7POS_CDC <- dat2$TESTSNEW7POS_CDC / 100
+nobs <- nrow(dat2)
+s <- 0.5
+dat2$TESTS_PRIME <- ((dat2$TESTSNEW7POS_CDC * (nobs-1)) + s) / nobs
 ## -------------------------------------------------------------------------------------------
 dat.sub <- dat2 %>%
   filter(date == "2021-01-01") 
@@ -51,13 +54,13 @@ prior_bym2 <- list(
 
 
 ## -------------------------------------------------------------------------------------------
-f1 <- TESTSNEW7POS_CDC ~
+f1 <- TESTS_PRIME ~
   1 +
   f(struct, model = "bym2", graph = g, hyper = prior_bym2) 
 
 
 ## -------------------------------------------------------------------------------------------
-res1 <- inla(f1, data = dat.sub,
+res1 <- inla(f1, data = dat.sub, family = "beta",
              control.predictor = list(compute = TRUE),
              control.compute = list(dic = TRUE, waic = TRUE), verbose = FALSE
 )
