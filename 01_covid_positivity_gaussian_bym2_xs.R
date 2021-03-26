@@ -61,13 +61,6 @@ res1 <- inla(f1, data = dat.sub,
              control.predictor = list(compute = TRUE),
              control.compute = list(dic = TRUE, waic = TRUE), verbose = FALSE
 )
-res1 <- inla(f1, data = dat.sub, family = "gaussian",
-             control.predictor = list(compute = TRUE),
-             control.compute = list(dic = TRUE, waic = TRUE), 
-             control.family = list(hyper = list(prec = list(prior="logtnormal", 
-                                                            param = c(0, 0.01)))),
-                                              verbose = FALSE
-)
 
 
 ## -------------------------------------------------------------------------------------------
@@ -102,10 +95,7 @@ f2 <- TESTSNEW7POS_CDC ~
 ## -------------------------------------------------------------------------------------------
 res2 <- inla(f2, data = dat.sub,
              control.predictor = list(compute = TRUE),
-             control.compute = list(dic = TRUE, waic = TRUE), 
-             control.family = list(hyper = list(prec = list(prior="logtnormal", 
-                                                            param = c(0, 0.01)))),
-             verbose = TRUE, 
+             control.compute = list(dic = TRUE, waic = TRUE), verbose = TRUE, 
              control.inla = list(strategy = "simplified.laplace", 
                                  int.strategy="eb")
 )
@@ -127,10 +117,11 @@ f3 <- TESTSNEW7POS_CDC ~
 ## -------------------------------------------------------------------------------------------
 res3 <- inla(f3, data = dat.sub,
              control.predictor = list(compute = TRUE),
-             control.compute = list(dic = TRUE, waic = TRUE), 
-             control.family = list(hyper = list(prec = list(prior="logtnormal", 
-                                                            param = c(0, 0.01)))),
-             verbose = TRUE,
+             control.compute = list(dic = TRUE, waic = TRUE), verbose = TRUE, 
+             control.family = list( 
+               hyper = list( 
+                 prec = list( 
+                   initial = -1))),
              control.inla = list(strategy = "simplified.laplace", 
                                  int.strategy="eb")
 )
@@ -151,10 +142,11 @@ f4 <- TESTSNEW7POS_CDC ~
 ## -------------------------------------------------------------------------------------------
 res4 <- inla(f4, data = dat.sub,
              control.predictor = list(compute = TRUE),
-             control.compute = list(dic = TRUE, waic = TRUE), 
-             control.family = list(hyper = list(prec = list(prior="logtnormal", 
-                                                            param = c(0, 0.01)))),
-             verbose = TRUE,
+             control.compute = list(dic = TRUE, waic = TRUE), verbose = TRUE, 
+             control.family = list( 
+               hyper = list( 
+                 prec = list( 
+                   initial = -1))),
              control.inla = list(strategy = "simplified.laplace", 
                                  int.strategy="eb")
 )
