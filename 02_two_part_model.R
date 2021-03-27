@@ -11,7 +11,7 @@ library(INLA)
 library(INLAutils)
 library(ggregplot)
 
-# inla.setOption(pardiso.license = "~/pardiso.lic")
+inla.setOption(pardiso.license = "~/pardiso.lic")
 
 ## -------------------------------------------------------------------------------------------
 load("dat2.RData")
@@ -121,25 +121,29 @@ f8 <- TESTSNEW7POS_CDC ~ scale(Pop_m) + scale(gini) + scale(Uninsured) +
 ## constr = TRUE
 system.time(
   res1 <- inla(f8, data = dat2,
-               control.predictor = list(compute = TRUE),
-               control.compute = list(dic = TRUE, waic = TRUE), 
+               #control.predictor = list(compute = TRUE),
+               #control.compute = list(dic = TRUE, waic = TRUE), 
+               control.compute=list(openmp.strategy="pardiso"),
                control.fixed = list(prec.intercept = 1),
                control.inla = list(strategy = "gaussian",
                                    int.strategy = "eb",
                                    diagonal = 5e-2),
-               verbose = TRUE, num.threads = 32,
+               verbose = TRUE, 
+               num.threads = 4:-1,
   )
 )
 
-## constr = TRUE
+## diagonal = 0
 system.time(
   res1 <- inla(f8, data = dat2,
-               control.predictor = list(compute = TRUE),
-               control.compute = list(dic = TRUE, waic = TRUE),
+               #control.predictor = list(compute = TRUE),
+               #control.compute = list(dic = TRUE, waic = TRUE),
+               control.compute=list(openmp.strategy="pardiso"),
                control.fixed = list(prec.intercept = 1),
                control.mode = list(result = res1, restart = TRUE),
-               control.inla = list(diagonal = 0),
-               verbose = TRUE, num.threads = 32,
+               control.inla = list(int.strategy = "eb",
+                                   diagonal = 0),
+               verbose = TRUE, num.threads = 4:-1,
   )
 )
 
