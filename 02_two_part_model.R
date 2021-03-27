@@ -123,7 +123,7 @@ system.time(
   res1 <- inla(f8, data = dat2,
                #control.predictor = list(compute = TRUE),
                #control.compute = list(dic = TRUE, waic = TRUE), 
-               control.compute=list(openmp.strategy="pardiso"),
+               control.compute=list(openmp.strategy="pardiso.serial"),
                control.fixed = list(prec.intercept = 1),
                control.inla = list(strategy = "gaussian",
                                    int.strategy = "eb",
