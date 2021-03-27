@@ -17,7 +17,7 @@ inla.setOption(pardiso.license = "~/pardiso.lic")
 load("dat2.RData")
 dim(dat2)
 ## Time index
-dat2$date1 <- as.numeric(ymd(dat2$date) - min(ymd(dat2$date)) + 1)
+#dat2$date1 <- as.numeric(ymd(dat2$date) - min(ymd(dat2$date)) + 1)
 ## SF object for plotting
 dat_sf <- dat2 %>%
  filter(date1 == 1)

@@ -32,6 +32,13 @@ nb2INLA("map.adj", nb2)
 ## Merge to reorder data to match counties (note that R will sort by default)
 dat2 <- merge(cnty, dat, by = "FIPS", sort = FALSE)
 
+## Add date index
+dat2$date1 <- as.numeric(ymd(dat2$date) - min(ymd(dat2$date)) + 1)
+
+## Sort by struct and date1
+dat2 <- dat2 %>% 
+  arrange(struct, date1
+          )
 ## Estimate positivity rate (as percentage)
 
 ## First remove zero tests
