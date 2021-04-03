@@ -1,7 +1,7 @@
 ## ----setup, include=FALSE-------------------------------------------------------------------
 
 ## -------------------------------------------------------------------------------------------
-#library(sf)
+library(sf)
 #library(tmap)
 library(dplyr)
 library(ggpubr)
@@ -118,12 +118,18 @@ f8 <- TESTSNEW7POS_CDC ~ scale(Pop_m) + scale(gini) + scale(Uninsured) +
   f(struct, model = "bym2", graph = g, hyper = prior_bym2, 
     scale.model = TRUE)
 
+dat2$TESTSNEW7POS_CDC <- dat2$TESTSNEW7POS_CDC / 100
+cens <- min(dat2$TESTSNEW7POS_CDC[dat2$TESTSNEW7POS_CDC > 0])
 ## constr = TRUE
 system.time(
   res1 <- inla(f8, data = dat2,
-               #control.predictor = list(compute = TRUE),
-               #control.compute = list(dic = TRUE, waic = TRUE), 
-               control.compute=list(openmp.strategy="pardiso"),
+               family = "beta",
+               control.family=list(link='logit', 
+                                   beta.censor.value = cens),
+               #Ntrials = dat2$TESTSNEW7AVG,
+               control.predictor = list(compute = TRUE),
+               control.compute = list(dic = TRUE, waic = TRUE, 
+                                      openmp.strategy = "pardiso"),
                control.fixed = list(prec.intercept = 1),
                control.inla = list(strategy = "gaussian",
                                    int.strategy = "eb",
@@ -136,9 +142,13 @@ system.time(
 ## diagonal = 0
 system.time(
   res1 <- inla(f8, data = dat2,
-               #control.predictor = list(compute = TRUE),
-               #control.compute = list(dic = TRUE, waic = TRUE),
-               control.compute=list(openmp.strategy="pardiso"),
+               family = "beta",
+               control.family=list(link='logit', 
+                                   beta.censor.value = cens),
+               #Ntrials = dat2$TESTSNEW7AVG,
+               control.predictor = list(compute = TRUE),
+               control.compute = list(dic = TRUE, waic = TRUE, 
+                                      openmp.strategy = "pardiso"),
                control.fixed = list(prec.intercept = 1),
                control.mode = list(result = res1, restart = TRUE),
                control.inla = list(int.strategy = "eb",
@@ -147,8 +157,10 @@ system.time(
   )
 )
 
-plot_fixed_marginals(res1)
-plot_hyper_marginals(res1)
+p1 <- plot_fixed_marginals(res1)
+ggsave("fixed.pdf", p1)
+p1 <- plot_hyper_marginals(res1)
+ggsave("hyper.pdf", p1)
 
 time.re <- res1$summary.random$date1
 p1 <- ggplot(time.re, aes(x = ID)) + 
@@ -159,6 +171,18 @@ p1 <- ggplot(time.re, aes(x = ID)) +
 print(p1)
 ggsave("time_re.pdf", p1)
 
+
+dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
+
+out <- list(summary.fixed = res1$summary.fixed, 
+            marginals.fixed = res1$marginals.fixed, 
+            summary.random = res1$summary.random, 
+            marginals.random = res1$marginals.random, 
+            summary.hyperpar = res1$summary.hyperpar,
+            marginals.hyperpar = res1$marginals.hyperpar)
+
+save(time.re, dat_sf, out,
+     file = "./full_model.RData")
 ## garbage collection
 gc()
 ## -------------------------------------------------------------------------------------------
