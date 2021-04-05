@@ -121,23 +121,23 @@ f8 <- TESTSNEW7POS_CDC ~ scale(Pop_m) + scale(gini) + scale(Uninsured) +
 dat2$TESTSNEW7POS_CDC <- dat2$TESTSNEW7POS_CDC / 100
 cens <- min(dat2$TESTSNEW7POS_CDC[dat2$TESTSNEW7POS_CDC > 0])
 ## constr = TRUE
-system.time(
-  res1 <- inla(f8, data = dat2,
-               family = "beta",
-               control.family=list(link='logit', 
-                                   beta.censor.value = cens),
-               #Ntrials = dat2$TESTSNEW7AVG,
-               control.predictor = list(compute = TRUE),
-               control.compute = list(dic = TRUE, waic = TRUE, 
-                                      openmp.strategy = "pardiso"),
-               control.fixed = list(prec.intercept = 1),
-               control.inla = list(strategy = "gaussian",
-                                   int.strategy = "eb",
-                                   diagonal = 5e-2),
-               verbose = TRUE, 
-               num.threads = 4:-1,
-  )
-)
+# system.time(
+#   res1 <- inla(f8, data = dat2,
+#                family = "beta",
+#                control.family=list(link='logit', 
+#                                    beta.censor.value = cens),
+#                #Ntrials = dat2$TESTSNEW7AVG,
+#                control.predictor = list(compute = TRUE),
+#                control.compute = list(dic = TRUE, waic = TRUE, 
+#                                       openmp.strategy = "pardiso"),
+#                control.fixed = list(prec.intercept = 1),
+#                control.inla = list(strategy = "gaussian",
+#                                    int.strategy = "eb",
+#                                    diagonal = 5e-2),
+#                verbose = TRUE, 
+#                num.threads = 4:-1,
+#   )
+# )
 
 ## diagonal = 0
 system.time(
@@ -166,10 +166,21 @@ time.re <- res1$summary.random$date1
 p1 <- ggplot(time.re, aes(x = ID)) + 
   geom_ribbon(aes(ymin = `0.025quant`, ymax = `0.975quant`), fill = 'gray70') +
   geom_line(aes(y = mean)) + 
-  scale_x_continuous("Days since 2020-06-02") + 
+  scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
 print(p1)
 ggsave("time_re.pdf", p1)
+
+## Crude trend plot in odds
+time.re$mean_odds <- exp(time.re$mean)
+time.re$cilo_odds <- exp(time.re$`0.025quant`)
+time.re$cihi_odds <- exp(time.re$`0.975quant`)
+p2 <- ggplot(time.re, aes(x = ID)) + 
+  geom_ribbon(aes(ymin = cilo_odds, ymax = cihi_odds), fill = 'gray70') +
+  geom_line(aes(y = mean_odds)) + 
+  scale_x_continuous("Days since 2020-01-22") + 
+  scale_y_continuous("Time random effect") + theme_bw()
+ggsave("time_re_odds.pdf", p1)
 
 
 dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
