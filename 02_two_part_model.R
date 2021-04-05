@@ -150,7 +150,7 @@ system.time(
                control.compute = list(dic = TRUE, waic = TRUE, 
                                       openmp.strategy = "pardiso"),
                control.fixed = list(prec.intercept = 1),
-               control.mode = list(result = res1, restart = TRUE),
+               #control.mode = list(result = res1, restart = TRUE),
                control.inla = list(int.strategy = "eb",
                                    diagonal = 0),
                verbose = TRUE, num.threads = 4:-1,
@@ -180,7 +180,7 @@ p2 <- ggplot(time.re, aes(x = ID)) +
   geom_line(aes(y = mean_odds)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
-ggsave("time_re_odds.pdf", p1)
+ggsave("time_re_odds.pdf", p2)
 
 
 dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
