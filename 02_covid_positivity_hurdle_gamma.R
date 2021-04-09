@@ -114,6 +114,15 @@ prior_bym2 <- list(
     param = c(phi_u, phi_alpha))
 )
 
+prior_bym2 <- list(
+  prec = list(
+    prior = "pc.prec",
+    param = c(prec_u, prec_alpha)),
+  phi = list(
+    prior = "pc",
+    param = c(phi_u, phi_alpha))
+)
+
 ## From INLA Germany example (time should be a RW)
 rw1_u = .2/.31
 rw1_alpha = .01
@@ -129,8 +138,6 @@ formula <- outcome.matrix ~ mu -1 +
   Uninsured1 + Uninsured2 + Production1 + Production2 +
   RUCC1 + RUCC2 + PCP1 + PCP2 + 
   RPL_THEMES1 + RPL_THEMES2 +
-  # f(i.date1, model = "rw1", hyper = prior_rw1) +
-  # f(i.date2, copy = "i.date1", fixed = FALSE) +
   f(i.spat1, model = "bym2", graph = g, hyper = prior_bym2) +
   f(i.spat2, copy = "i.spat1", fixed = FALSE)
 
