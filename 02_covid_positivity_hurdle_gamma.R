@@ -32,7 +32,7 @@ g <- inla.read.graph(filename = "./map.adj")
 
 ## Subset for testsing
 dat2 <- dat2 %>%
-  filter(date1 >= 50 & date1 < 100)
+  filter(date1 >= 75 & date1 < 100)
 
 ## Number of samples
 n2 <- nrow(dat2)
@@ -82,12 +82,12 @@ RUCC1 <- c(RUCC, nothing2) # Binomial male popn
 RUCC2 <- c(nothing1, RUCC) # Gamma male popn
 
 PCP <- scale(dat2$PCP)
-Pop_m1 <- c(Pop_m, nothing2) # Binomial male popn
-Pop_m2 <- c(nothing1, Pop_m) # Gamma male popn
+PCP1 <- c(PCP, nothing2) # Binomial male popn
+PCP2 <- c(nothing1, PCP) # Gamma male popn
 
 RPL_THEMES <-  scale(dat2$RPL_THEMES)
-Pop_m1 <- c(Pop_m, nothing2) # Binomial male popn
-Pop_m2 <- c(nothing1, Pop_m) # Gamma male popn
+RPL_THEMES1 <- c(RPL_THEMES, nothing2) # Binomial male popn
+RPL_THEMES2 <- c(nothing1, RPL_THEMES) # Gamma male popn
 
 
 #Data set
@@ -125,9 +125,12 @@ prior_prec <- list(prec = list(prior = "pc.prec",
 ## -------------------------------------------------------------------------------------------
 ## Model formula
 formula <- outcome.matrix ~ mu -1 +
-  Pop_m1 + Pop_m2 +
-  #f(i.date1, model = "rw1", hyper = prior_rw1) +
-  #f(i.date2, copy = "i.date2", fixed = FALSE) +
+  Pop_m1 + Pop_m2 + gini1 + gini2 +
+  Uninsured1 + Uninsured2 + Production1 + Production2 +
+  RUCC1 + RUCC2 + PCP1 + PCP2 + 
+  RPL_THEMES1 + RPL_THEMES2 +
+  # f(i.date1, model = "rw1", hyper = prior_rw1) +
+  # f(i.date2, copy = "i.date1", fixed = FALSE) +
   f(i.spat1, model = "bym2", graph = g, hyper = prior_bym2) +
   f(i.spat2, copy = "i.spat1", fixed = FALSE)
 
