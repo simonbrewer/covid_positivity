@@ -151,11 +151,10 @@ res1 <- inla(formula, family = c("binomial", "gamma"), data = data,
              verbose=TRUE) 
 
 p1 <- plot_fixed_marginals(res1)
-ggsave("fixed.pdf", p1)
+ggsave("fixed_hg.pdf", p1)
 p1 <- plot_hyper_marginals(res1)
-ggsave("hyper.pdf", p1)
+ggsave("hyper_hg.pdf", p1)
 
-stop()
 time.re <- res1$summary.random$date1
 p1 <- ggplot(time.re, aes(x = ID)) + 
   geom_ribbon(aes(ymin = `0.025quant`, ymax = `0.975quant`), fill = 'gray70') +
@@ -163,7 +162,7 @@ p1 <- ggplot(time.re, aes(x = ID)) +
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
 print(p1)
-ggsave("time_re.pdf", p1)
+ggsave("time_re_hg.pdf", p1)
 
 ## Crude trend plot in odds
 time.re$mean_odds <- exp(time.re$mean)
@@ -174,7 +173,7 @@ p2 <- ggplot(time.re, aes(x = ID)) +
   geom_line(aes(y = mean_odds)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
-ggsave("time_re_odds.pdf", p2)
+ggsave("time_re_odds_hg.pdf", p2)
 
 
 dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
@@ -187,6 +186,6 @@ out <- list(summary.fixed = res1$summary.fixed,
             marginals.hyperpar = res1$marginals.hyperpar)
 
 save(time.re, dat_sf, out,
-     file = "./full_model1.RData")
+     file = "./full_model_hg.RData")
 ## garbage collection
 gc()

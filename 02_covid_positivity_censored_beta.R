@@ -82,9 +82,9 @@ system.time(
 )
 
 p1 <- plot_fixed_marginals(res1)
-ggsave("fixed.pdf", p1)
+ggsave("fixed_cb.pdf", p1)
 p1 <- plot_hyper_marginals(res1)
-ggsave("hyper.pdf", p1)
+ggsave("hyper_cb.pdf", p1)
 
 time.re <- res1$summary.random$date1
 p1 <- ggplot(time.re, aes(x = ID)) + 
@@ -93,7 +93,7 @@ p1 <- ggplot(time.re, aes(x = ID)) +
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
 print(p1)
-ggsave("time_re.pdf", p1)
+ggsave("time_re_cb.pdf", p1)
 
 ## Crude trend plot in odds
 time.re$mean_odds <- exp(time.re$mean)
@@ -104,7 +104,7 @@ p2 <- ggplot(time.re, aes(x = ID)) +
   geom_line(aes(y = mean_odds)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
-ggsave("time_re_odds.pdf", p2)
+ggsave("time_re_odds_cb.pdf", p2)
 
 
 dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
@@ -117,11 +117,12 @@ out <- list(summary.fixed = res1$summary.fixed,
             marginals.hyperpar = res1$marginals.hyperpar)
 
 save(time.re, dat_sf, out,
-     file = "./full_model1.RData")
+     file = "./full_model_cb.RData")
 ## garbage collection
 gc()
 ## -------------------------------------------------------------------------------------------
 
+stop()
 ## -------------------------------------------------------------------------------------------
 ## Model 2: include state effect
 f2 <- TESTSNEW7POS_CDC ~ scale(Pop_m) + scale(gini) + scale(Uninsured) + 
@@ -155,9 +156,9 @@ system.time(
 )
 
 p1 <- plot_fixed_marginals(res2)
-ggsave("fixed.pdf", p1)
+ggsave("fixed_cb_s.pdf", p1)
 p1 <- plot_hyper_marginals(res2)
-ggsave("hyper.pdf", p1)
+ggsave("hyper_cb_s.pdf", p1)
 
 time.re <- res2$summary.random$date1
 p1 <- ggplot(time.re, aes(x = ID)) + 
@@ -166,7 +167,7 @@ p1 <- ggplot(time.re, aes(x = ID)) +
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
 print(p1)
-ggsave("time_re.pdf", p1)
+ggsave("time_re_cb_s.pdf", p1)
 
 ## Crude trend plot in odds
 time.re$mean_odds <- exp(time.re$mean)
@@ -177,7 +178,7 @@ p2 <- ggplot(time.re, aes(x = ID)) +
   geom_line(aes(y = mean_odds)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
-ggsave("time_re_odds.pdf", p2)
+ggsave("time_re_odds_cb_s.pdf", p2)
 
 
 dat_sf$u <- res2$summary.random$struct[1:3108, "mean"]
@@ -190,7 +191,7 @@ out <- list(summary.fixed = res2$summary.fixed,
             marginals.hyperpar = res2$marginals.hyperpar)
 
 save(time.re, dat_sf, out,
-     file = "./full_model2.RData")
+     file = "./full_model_cb_s.RData")
 ## garbage collection
 gc()
 ## -------------------------------------------------------------------------------------------
