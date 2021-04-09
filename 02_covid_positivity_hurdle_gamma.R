@@ -138,6 +138,8 @@ formula <- outcome.matrix ~ mu -1 +
   Uninsured1 + Uninsured2 + Production1 + Production2 +
   RUCC1 + RUCC2 + PCP1 + PCP2 + 
   RPL_THEMES1 + RPL_THEMES2 +
+  f(i.date1, model = "rw1", hyper = prior_rw1) +
+  f(i.date2, copy = "i.date1", fixed = FALSE) +
   f(i.spat1, model = "bym2", graph = g, hyper = prior_bym2) +
   f(i.spat2, copy = "i.spat1", fixed = FALSE)
 
