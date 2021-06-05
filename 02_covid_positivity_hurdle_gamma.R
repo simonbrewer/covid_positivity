@@ -31,8 +31,8 @@ dat_sf <- dat2 %>%
 g <- inla.read.graph(filename = "./map.adj")
 
 ## Subset for testsing
-dat2 <- dat2 %>%
-  filter(date1 >= 75 & date1 < 100)
+# dat2 <- dat2 %>%
+#   filter(date1 < 100)
 
 ## Number of samples
 n2 <- nrow(dat2)
@@ -157,28 +157,27 @@ ggsave("fixed_hg.pdf", p1)
 p1 <- plot_hyper_marginals(res1)
 ggsave("hyper_hg.pdf", p1)
 
-time.re <- res1$summary.random$date1
-p1 <- ggplot(time.re, aes(x = ID)) + 
+time_re1 <- res1$summary.random$i.date1
+p1 <- ggplot(time_re1, aes(x = ID)) + 
   geom_ribbon(aes(ymin = `0.025quant`, ymax = `0.975quant`), fill = 'gray70') +
   geom_line(aes(y = mean)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
 print(p1)
-ggsave("time_re_hg.pdf", p1)
-
-## Crude trend plot in odds
-time.re$mean_odds <- exp(time.re$mean)
-time.re$cilo_odds <- exp(time.re$`0.025quant`)
-time.re$cihi_odds <- exp(time.re$`0.975quant`)
-p2 <- ggplot(time.re, aes(x = ID)) + 
-  geom_ribbon(aes(ymin = cilo_odds, ymax = cihi_odds), fill = 'gray70') +
-  geom_line(aes(y = mean_odds)) + 
+time_re2 <- res1$summary.random$i.date2
+p2 <- ggplot(time_re2, aes(x = ID)) + 
+  geom_ribbon(aes(ymin = `0.025quant`, ymax = `0.975quant`), fill = 'gray70') +
+  geom_line(aes(y = mean)) + 
   scale_x_continuous("Days since 2020-01-22") + 
   scale_y_continuous("Time random effect") + theme_bw()
-ggsave("time_re_odds_hg.pdf", p2)
+print(p2)
 
+ggsave("time_re_hg.pdf", ggarrange(p1, p2))
 
-dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
+# dat_sf$u <- res1$summary.random$struct[1:3108, "mean"]
+
+spat_re1 <- res1$summary.random$i.spat1
+spat_re2 <- res1$summary.random$i.spat2
 
 out <- list(summary.fixed = res1$summary.fixed, 
             marginals.fixed = res1$marginals.fixed, 
@@ -187,7 +186,7 @@ out <- list(summary.fixed = res1$summary.fixed,
             summary.hyperpar = res1$summary.hyperpar,
             marginals.hyperpar = res1$marginals.hyperpar)
 
-save(time.re, dat_sf, out,
+save(time_re1, time_re2, spat_re1, spat_re2, dat_sf, out,
      file = "./full_model_hg.RData")
 ## garbage collection
 gc()
