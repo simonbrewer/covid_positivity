@@ -71,7 +71,7 @@ system.time(
                                    beta.censor.value = cens),
                #Ntrials = dat2$TESTSNEW7AVG,
                control.predictor = list(compute = TRUE),
-               control.compute = list(dic = TRUE, waic = TRUE, 
+               control.compute = list(cpo = TRUE, dic = TRUE, waic = TRUE, 
                                       openmp.strategy = "pardiso"),
                control.fixed = list(prec.intercept = 1),
                #control.mode = list(result = res1, restart = TRUE),
